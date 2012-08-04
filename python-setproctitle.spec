@@ -9,8 +9,8 @@
 %global tarname setproctitle
 
 Name:           python-setproctitle
-Version:        1.1.3
-Release:        3%{?dist}
+Version:        1.1.6
+Release:        1%{?dist}
 Summary:        Python module to customize a process title
 
 License:        BSD
@@ -80,12 +80,7 @@ chmod 0755 %{buildroot}%{python3_sitearch}/setproctitle*.so
 %endif
 
 %check
-BUILD_DIR=$(%{__python} -c "import sys; import platform; \
-print('build/lib.linux-{0}-{1}.{2}'.format(platform.machine(), \
-sys.version_info[0], sys.version_info[1]))")
-gcc `pkg-config --cflags --libs python` -o tests/pyrun tests/pyrun.c
-PYTHONPATH=$BUILD_DIR:$PYTHONPATH ROOT_PATH=$(pwd) \
-                                  %{__python} tests/setproctitle_test.py -v
+make tests/pyrun2
 # FIXME: tests are broken with python3
 %if 0%{?with_python3}
 pushd %{py3dir}
@@ -94,7 +89,7 @@ print('build/lib.linux-{0}-{1}.{2}'.format(platform.machine(), \
 sys.version_info[0], sys.version_info[1]))")
 # looks like tests are not 2to3'ed by setup.py
 2to3 -w --no-diffs tests
-gcc `pkg-config --cflags --libs python3` -o tests/pyrun tests/pyrun.c
+gcc `pkg-config --cflags --libs python3` -o tests/pyrun3 tests/pyrun.c
 PYTHONPATH=$BUILD_DIR:$PYTHONPATH ROOT_PATH=$(pwd) \
                                   %{__python3} tests/setproctitle_test.py -v || :
 popd
@@ -102,18 +97,21 @@ popd
 
 
 %files
-%doc README COPYRIGHT
+%doc README.rst COPYRIGHT
 # For arch-specific packages: sitearch
 %{python_sitearch}/*
 
 %if 0%{?with_python3}
 %files -n python3-%{tarname}
-%doc README COPYRIGHT
+%doc README.rst COPYRIGHT
 # For arch-specific packages: sitearch
 %{python3_sitearch}/*
 %endif
 
 %changelog
+* Sat Aug  4 2012 Haïkel Guémar <hguemar@fedoraproject.org> - 1.1.6-1
+- upstream 1.1.6
+
 * Sat Jul 21 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.1.3-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
