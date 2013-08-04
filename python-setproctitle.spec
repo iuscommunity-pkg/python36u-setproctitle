@@ -10,7 +10,7 @@
 
 Name:           python-setproctitle
 Version:        1.1.6
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Python module to customize a process title
 
 License:        BSD
@@ -109,6 +109,9 @@ popd
 %endif
 
 %changelog
+* Sun Aug 04 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.1.6-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
+
 * Thu Feb 14 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.1.6-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 
