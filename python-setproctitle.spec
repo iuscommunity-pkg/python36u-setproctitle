@@ -1,16 +1,13 @@
-%if 0%{?fedora} > 12 || 0%{?rhel} > 6
+%if 0%{?fedora}
 %global with_python3 1
-%else
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
-%{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %endif
 
 
 %global tarname setproctitle
 
 Name:           python-setproctitle
-Version:        1.1.6
-Release:        7%{?dist}
+Version:        1.1.9
+Release:        1%{?dist}
 Summary:        Python module to customize a process title
 
 License:        BSD
@@ -21,10 +18,6 @@ BuildRequires:  python2-devel
 BuildRequires:  python-setuptools
 BuildRequires:  python-nose
 BuildRequires:  python-tools
-%{?filter_setup:
-%filter_provides_in %{python_sitearch}/.*\.so$
-%filter_setup
-}
 
 
 %description
@@ -61,8 +54,7 @@ It's based on PostgreSQL implementation which has proven to be portable.
 
 
 %build
-# Remove CFLAGS=... for noarch packages (unneeded)
-CFLAGS="%{optflags}" %{__python} setup.py build
+CFLAGS="%{optflags}" %{__python2} setup.py build
 %if 0%{?with_python3}
 pushd %{py3dir}
 CFLAGS="%{optflags}" %{__python3} setup.py build
@@ -70,8 +62,7 @@ popd
 %endif
 
 %install
-%{__python} setup.py install -O1 --skip-build --root %{buildroot}
-chmod 0755 %{buildroot}%{python_sitearch}/setproctitle.so
+%{__python2} setup.py install -O1 --skip-build --root %{buildroot}
 %if 0%{?with_python3}
 pushd %{py3dir}
 CFLAGS="%{optflags}" %{__python3} setup.py install -O1 --skip-build --root %{buildroot}
@@ -90,7 +81,7 @@ sys.version_info[0], sys.version_info[1]))")
 # looks like tests are not 2to3'ed by setup.py
 2to3 -w --no-diffs tests
 gcc `pkg-config --cflags --libs python3` -o tests/pyrun3 tests/pyrun.c
-PYTHONPATH=$BUILD_DIR:$PYTHONPATH ROOT_PATH=$(pwd) \
+PYTHONPATH=$BUILD_DIR:$PYTHONPATH ROOT_PATH=$(pwd) LANG=en_US.utf8 \
                                   %{__python3} tests/setproctitle_test.py -v || :
 popd
 %endif
@@ -99,16 +90,22 @@ popd
 %files
 %doc README.rst COPYRIGHT
 # For arch-specific packages: sitearch
-%{python_sitearch}/*
+%{python2_sitearch}/%{tarname}.so
+%{python2_sitearch}/%{tarname}*.egg-info
+
 
 %if 0%{?with_python3}
 %files -n python3-%{tarname}
 %doc README.rst COPYRIGHT
 # For arch-specific packages: sitearch
-%{python3_sitearch}/*
+%{python3_sitearch}/%{tarname}*.so
+%{python3_sitearch}/%{tarname}*.egg-info
 %endif
 
 %changelog
+* Sat Aug 15 2015 Haïkel Guémar <hguemar@fedoraproject.org> - 1.1.9-1
+- Upstream 1.1.9
+
 * Thu Jun 18 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.1.6-7
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
