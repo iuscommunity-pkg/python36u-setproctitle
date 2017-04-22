@@ -1,44 +1,18 @@
-%if 0%{?fedora}
-%global with_python3 1
-%endif
+%global python python36u
+%global srcname setproctitle
 
-
-%global tarname setproctitle
-
-Name:           python-setproctitle
-Version:        1.1.9
-Release:        6%{?dist}
+Name:           %{python}-%{srcname}
+Version:        1.1.10
+Release:        1.ius%{?dist}
 Summary:        Python module to customize a process title
-
 License:        BSD
-URL:            http://pypi.python.org/pypi/%{tarname}
-Source0:        http://pypi.python.org/packages/source/s/%{tarname}/%{tarname}-%{version}.tar.gz
-
-BuildRequires:  python2-devel
-BuildRequires:  python-setuptools
-BuildRequires:  python-nose
-BuildRequires:  python-tools
+URL:            https://github.com/dvarrazzo/py-setproctitle
+Source0:        https://files.pythonhosted.org/packages/source/s/setproctitle/setproctitle-%{version}.tar.gz
+BuildRequires:  %{python}-devel
+BuildRequires:  %{python}-setuptools
 
 
 %description
-Python module allowing a process to change its title as displayed by
-system tool such as ps and top.
-
-It's useful in multiprocess systems, allowing to identify tasks each forked
-process is busy with. This technique has been used by PostgreSQL and OpenSSH.
-
-It's based on PostgreSQL implementation which has proven to be portable.
-
-
-
-%if 0%{?with_python3}
-%package -n python3-%{tarname}
-Summary:        Python module to customize a process title
-BuildRequires:  python3-devel
-BuildRequires:  python3-setuptools
-BuildRequires:  python3-nose
-
-%description -n python3-%{tarname}
 Python module allowing a process to change its title as displayed by
 system tool such as ps and top.
 
@@ -46,63 +20,38 @@ It's useful in multi-process systems, allowing to identify tasks each forked
 process is busy with. This technique has been used by PostgreSQL and OpenSSH.
 
 It's based on PostgreSQL implementation which has proven to be portable.
-%endif
+
 
 %prep
-%setup -q -n %{tarname}-%{version}
-%{?with_python3: cp -a . %{py3dir}}
+%setup -q -n %{srcname}-%{version}
 
 
 %build
-CFLAGS="%{optflags}" %{__python2} setup.py build
-%if 0%{?with_python3}
-pushd %{py3dir}
-CFLAGS="%{optflags}" %{__python3} setup.py build
-popd
-%endif
+%{py36_build}
+
 
 %install
-%{__python2} setup.py install -O1 --skip-build --root %{buildroot}
-%if 0%{?with_python3}
-pushd %{py3dir}
-CFLAGS="%{optflags}" %{__python3} setup.py install -O1 --skip-build --root %{buildroot}
-popd
-chmod 0755 %{buildroot}%{python3_sitearch}/setproctitle*.so
-%endif
+%{py36_install}
+
 
 %check
-make tests/pyrun2
-# FIXME: tests are broken with python3
-%if 0%{?with_python3}
-pushd %{py3dir}
-BUILD_DIR=$(%{__python3} -c "import sys; import platform; \
+BUILD_DIR=$(%{__python36} -c "import sys; import platform; \
 print('build/lib.linux-{0}-{1}.{2}'.format(platform.machine(), \
 sys.version_info[0], sys.version_info[1]))")
-# looks like tests are not 2to3'ed by setup.py
-2to3 -w --no-diffs tests
-gcc `pkg-config --cflags --libs python3` -o tests/pyrun3 tests/pyrun.c
 PYTHONPATH=$BUILD_DIR:$PYTHONPATH ROOT_PATH=$(pwd) LANG=en_US.utf8 \
-                                  %{__python3} tests/setproctitle_test.py -v || :
-popd
-%endif
+                                  %{__python36} tests/setproctitle_test.py -v || :
 
 
 %files
 %doc README.rst COPYRIGHT
-# For arch-specific packages: sitearch
-%{python2_sitearch}/%{tarname}.so
-%{python2_sitearch}/%{tarname}*.egg-info
+%{python36_sitearch}/%{srcname}*
 
-
-%if 0%{?with_python3}
-%files -n python3-%{tarname}
-%doc README.rst COPYRIGHT
-# For arch-specific packages: sitearch
-%{python3_sitearch}/%{tarname}*.so
-%{python3_sitearch}/%{tarname}*.egg-info
-%endif
 
 %changelog
+* Sat Apr 22 2017 evitalis <evitalis@users.noreply.github.com> - 1.1.10-1.ius
+- Port from Fedora to IUS
+- Latest upstream
+
 * Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.1.9-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
