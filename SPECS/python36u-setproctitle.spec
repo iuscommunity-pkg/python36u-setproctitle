@@ -35,13 +35,15 @@ It's based on PostgreSQL implementation which has proven to be portable.
 
 
 %files
-%doc README.rst COPYRIGHT
+%license COPYRIGHT
+%doc README.rst
 %{python36_sitearch}/%{srcname}*
 
 
 %changelog
 * Mon Apr 24 2017 Carl George <carl.george@rackspace.com> - 1.1.10-2.ius
 - Remove test suite
+- Properly install COPYRIGHT file
 
 * Sat Apr 22 2017 evitalis <evitalis@users.noreply.github.com> - 1.1.10-1.ius
 - Port from Fedora to IUS
