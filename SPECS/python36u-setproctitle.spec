@@ -3,7 +3,7 @@
 
 Name:           %{python}-%{srcname}
 Version:        1.1.10
-Release:        1.ius%{?dist}
+Release:        2.ius%{?dist}
 Summary:        Python module to customize a process title
 License:        BSD
 URL:            https://github.com/dvarrazzo/py-setproctitle
@@ -34,20 +34,15 @@ It's based on PostgreSQL implementation which has proven to be portable.
 %{py36_install}
 
 
-%check
-BUILD_DIR=$(%{__python36} -c "import sys; import platform; \
-print('build/lib.linux-{0}-{1}.{2}'.format(platform.machine(), \
-sys.version_info[0], sys.version_info[1]))")
-PYTHONPATH=$BUILD_DIR:$PYTHONPATH ROOT_PATH=$(pwd) LANG=en_US.utf8 \
-                                  %{__python36} tests/setproctitle_test.py -v || :
-
-
 %files
 %doc README.rst COPYRIGHT
 %{python36_sitearch}/%{srcname}*
 
 
 %changelog
+* Mon Apr 24 2017 Carl George <carl.george@rackspace.com> - 1.1.10-2.ius
+- Remove test suite
+
 * Sat Apr 22 2017 evitalis <evitalis@users.noreply.github.com> - 1.1.10-1.ius
 - Port from Fedora to IUS
 - Latest upstream
