@@ -1,15 +1,20 @@
-%global python python36u
+%global python python36
 %global srcname setproctitle
 
 Name:           %{python}-%{srcname}
 Version:        1.1.10
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Python module to customize a process title
 License:        BSD
 URL:            https://github.com/dvarrazzo/py-setproctitle
 Source0:        https://files.pythonhosted.org/packages/source/s/setproctitle/setproctitle-%{version}.tar.gz
 BuildRequires:  %{python}-devel
 BuildRequires:  %{python}-setuptools
+
+# Rename from python36u-setproctitle
+Provides: python36u-%{srcname} = %{version}-%{release}
+Provides: python36u-%{srcname}%{?_isa} = %{version}-%{release}
+Obsoletes: python36u-%{srcname} < 1.1.10-3
 
 
 %description
@@ -41,6 +46,9 @@ It's based on PostgreSQL implementation which has proven to be portable.
 
 
 %changelog
+* Sat Sep 21 2019 Carl George <carl@george.computer> - 1.1.10-3
+- Rename to python36-setuptools
+
 * Mon Apr 24 2017 Carl George <carl.george@rackspace.com> - 1.1.10-2.ius
 - Remove test suite
 - Properly install COPYRIGHT file
