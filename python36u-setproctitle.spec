@@ -3,7 +3,7 @@
 
 Name:           %{python}-%{srcname}
 Version:        1.1.10
-Release:        2.ius%{?dist}
+Release:        2%{?dist}
 Summary:        Python module to customize a process title
 License:        BSD
 URL:            https://github.com/dvarrazzo/py-setproctitle
