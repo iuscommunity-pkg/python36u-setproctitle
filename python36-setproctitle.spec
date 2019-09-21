@@ -1,13 +1,17 @@
 %global python python36
 %global srcname setproctitle
 
+%if %{defined el6}
+%global __python3 /usr/bin/python3.6
+%endif
+
 Name:           %{python}-%{srcname}
 Version:        1.1.10
 Release:        3%{?dist}
 Summary:        Python module to customize a process title
 License:        BSD
 URL:            https://github.com/dvarrazzo/py-setproctitle
-Source0:        https://files.pythonhosted.org/packages/source/s/setproctitle/setproctitle-%{version}.tar.gz
+Source0:        %pypi_source
 BuildRequires:  %{python}-devel
 BuildRequires:  %{python}-setuptools
 
@@ -32,22 +36,24 @@ It's based on PostgreSQL implementation which has proven to be portable.
 
 
 %build
-%{py36_build}
+%py3_build
 
 
 %install
-%{py36_install}
+%py3_install
 
 
 %files
 %license COPYRIGHT
 %doc README.rst
-%{python36_sitearch}/%{srcname}*
+%{python3_sitearch}/%{srcname}.cpython-%{python3_version_nodots}m-*-linux-gnu.so
+%{python3_sitearch}/%{srcname}-%{version}-py%{python3_version}.egg-info
 
 
 %changelog
 * Sat Sep 21 2019 Carl George <carl@george.computer> - 1.1.10-3
 - Rename to python36-setuptools
+- Switch to EPEL python3 macros
 
 * Mon Apr 24 2017 Carl George <carl.george@rackspace.com> - 1.1.10-2.ius
 - Remove test suite
